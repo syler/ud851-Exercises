@@ -15,4 +15,5 @@
   -->
 <resources>
     <string name="app_name">Project Setup</string>
+    <string name="app_hello">Hello caden, this is your first app in android studio, and it\'s 2017/02/22 11:18 PM.</string>
 </resources>
