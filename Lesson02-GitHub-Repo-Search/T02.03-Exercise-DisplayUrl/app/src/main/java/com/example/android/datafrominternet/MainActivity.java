@@ -16,6 +16,7 @@
 package com.example.android.datafrominternet;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 
 import com.example.android.datafrominternet.utilities.NetworkUtils;
 
+import java.io.IOException;
 import java.net.URL;
 
 public class MainActivity extends AppCompatActivity {
@@ -47,10 +49,8 @@ public class MainActivity extends AppCompatActivity {
         mSearchResultsTextView = (TextView) findViewById(R.id.tv_github_search_results_json);
     }
 
-    private void makeGithubSearchQuery()
-    {
-        URL url = NetworkUtils.buildUrl(mSearchBoxEditText.getText().toString());
-        mUrlDisplayTextView.setText(url.toString());
+    private void makeGithubSearchQuery() {
+        new GithubQueryTask().execute(mSearchBoxEditText.getText().toString());
     }
 
     @Override
@@ -67,5 +67,29 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public class GithubQueryTask extends AsyncTask<String, Void, String>
+    {
+        @Override
+        protected String doInBackground(String... params) {
+            String search = params[0];
+            if(search!=null && !search.equals(""))
+            {
+                try {
+                    return NetworkUtils.getResponseFromHttpUrl(NetworkUtils.buildUrl(search));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            mSearchResultsTextView.setText(s);
+        }
     }
 }
